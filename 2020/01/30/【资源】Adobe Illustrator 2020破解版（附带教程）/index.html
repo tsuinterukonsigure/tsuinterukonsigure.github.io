@@ -224,7 +224,7 @@
       
         
         <li class="menu-item menu-item-categories">
-          <a href="/categories/%20" rel="section">
+          <a href="/categories/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -373,6 +373,16 @@
           
 
           
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/01/30/%E3%80%90%E8%B5%84%E6%BA%90%E3%80%91Adobe%20Illustrator%202020%E7%A0%B4%E8%A7%A3%E7%89%88%EF%BC%88%E9%99%84%E5%B8%A6%E6%95%99%E7%A8%8B%EF%BC%89/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2020/01/30/%E3%80%90%E8%B5%84%E6%BA%90%E3%80%91Adobe%20Illustrator%202020%E7%A0%B4%E8%A7%A3%E7%89%88%EF%BC%88%E9%99%84%E5%B8%A6%E6%95%99%E7%A8%8B%EF%BC%89/" itemprop="commentsCount"></span>
+                </a>
+              </span>
             
           
 
@@ -890,10 +900,8 @@
 <!-- LOCAL: You can save these files to your site and update links -->
     
         
-        <!-- <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css"> -->
-        <!-- <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script> -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/default.css">
-        <script src="https://cdn.jsdelivr.net/gh/theme-next/theme-next-gitment@1/gitment.browser.js"></script>
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
     
 <!-- END LOCAL -->
 
@@ -902,10 +910,12 @@
     
       <script type="text/javascript">
       function renderGitment(){
-        var gitment = new Gitment({
+        var gitment = new Gitmint({
             id: '1580376356819', 
             owner: 'tsuinterukonsigure',
             repo: 'https://github.com/tsuinterukonsigure/tsuinterukonsigure.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
             
             oauth: {
             
