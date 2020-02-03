@@ -98,7 +98,7 @@
 
 
 
-  <meta name="keywords" content="个人学习,C++,牛顿迭代法," />
+  <meta name="keywords" content="个人学习,Python3,牛顿迭代法," />
 
 
 
@@ -119,10 +119,10 @@
 <meta property="og:description" content="何为牛顿迭代法​        牛顿迭代法的全名叫做牛顿-拉夫森方法（Newton-Raphson method），这是一种在实数域和复数域上近似求解方程的方法。方法使用函数$f(x)$的泰勒级数的前面几项来寻找方程$f(y) &#x3D; 0$的根。 ​        对于一般的形如$f(x) &#x3D; 0$的方程，首先任意估算一个解$x_1$，一般来说此时不能得到方程的正确解，则我们在方程曲线上$x&#x3D;x_1$">
 <meta property="og:image" content="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/newton1.gif?raw=true">
 <meta property="article:published_time" content="2020-01-31T02:56:17.088Z">
-<meta property="article:modified_time" content="2020-01-31T06:42:22.667Z">
+<meta property="article:modified_time" content="2020-02-03T06:52:39.932Z">
 <meta property="article:author" content="吃草莓糖葫芦">
 <meta property="article:tag" content="个人学习">
-<meta property="article:tag" content="C++">
+<meta property="article:tag" content="Python3">
 <meta property="article:tag" content="牛顿迭代法">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/newton1.gif?raw=true">
@@ -428,7 +428,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  865
+                  802
                 </span>
               
 
@@ -480,10 +480,10 @@ x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=(1-m)x_n+\frac{nx_n}{mx_n^m}</script><p>​  
 f(x)=x^2-n</script><script type="math/tex; mode=display">
 f'(x)=2x</script><script type="math/tex; mode=display">
 x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​        则我们的迭代方程就是$x_{n+1}=\frac{x_n}{2}+\frac{n}{2x_n}$。</p>
-<p>​        现在要确定的是迭代终止条件，假设我们要求的精度是0.00001，则迭代终止的条件为$|x^2-n|&lt;0.00001$。</p>
-<p>​        由于$x=0$的时候，$n$的值就为0，所以我们将迭代的起点设置为$x=1$，所以我们的程序如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;math.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line">Class Solution &#123;</span><br><span class="line">	<span class="function"><span class="keyword">double</span> <span class="title">mySqrt</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(n == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span>(n == <span class="number">1</span>) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        <span class="comment">//特殊值返回</span></span><br><span class="line">    	<span class="keyword">double</span> x0, x1, range;</span><br><span class="line">    	x0 = <span class="number">1.0</span>; <span class="comment">//迭代起点</span></span><br><span class="line">    	range = <span class="built_in">fabs</span>(x0 * x0 - n); <span class="comment">//|x^2-n|的值，用于终止迭代</span></span><br><span class="line">    	<span class="keyword">while</span>(range &gt; <span class="number">0.00001</span>) &#123;</span><br><span class="line">        	x1 = x0/<span class="number">2</span> + n/(<span class="number">2</span>*x0); <span class="comment">//迭代方程</span></span><br><span class="line">        	x0 = x1;</span><br><span class="line">        	range = <span class="built_in">fabs</span>(x1 * x1 - n);</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">return</span> x1;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Solution* sol = <span class="keyword">new</span> Solution();</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; n;</span><br><span class="line">    <span class="keyword">int</span> res = sol-&gt;mySqrt(n);</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; res;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>​        当我们输入的值为<strong>2147395599</strong>时，输出<strong>46339.99995</strong>，耗时几乎为0ms。而C++自带的<code>sqrt()</code>函数耗时8ms。</p>
+<p>​        现在要确定的是迭代终止条件，假设我们要求的精度是$0.00001$，则迭代终止的条件为$|x^2-n|&lt;0.00001$。</p>
+<p>​        由于$x=0$的时候，$n$的值就为$0$，所以我们将迭代的起点设置为$x=1$，所以我们的程序如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Python3</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mySqrt</span><span class="params">(self, n: int)</span> -&gt; int:</span></span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">or</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="comment">#先处理特殊值</span></span><br><span class="line">    x0 = <span class="number">1.0</span></span><br><span class="line">    ran = abs(x0 * x0 - n) <span class="comment">#迭代停止信号</span></span><br><span class="line">    <span class="keyword">while</span> ran &gt; <span class="number">0.00001</span>:</span><br><span class="line">        x1 = x0 / <span class="number">2</span> + n / (x0 * <span class="number">2</span>)</span><br><span class="line">        x0 = x1</span><br><span class="line">        ran = abs(x1 * x1 - n)</span><br><span class="line">    <span class="keyword">return</span> x1</span><br></pre></td></tr></table></figure>
+<p>​        当我们输入的值为<strong>2147395599</strong>时，输出<strong>46339.99998</strong>，输出耗时为32ms。而Python自带的<code>n**0.5</code>耗时60ms。</p>
 <hr>
 <h3 id="非典型算法"><a href="#非典型算法" class="headerlink" title="非典型算法"></a>非典型算法</h3><p>​        这里不得不提到神秘数字<strong>0x5f3759df</strong>，这个数字首次出现在游戏《雷神之锤III》的源代码中。</p>
 <p>​        在一个名为<code>q_math.c</code>的文件里出现了如下代码</p>
@@ -526,7 +526,7 @@ x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​    
   <p><span>本文标题:</span><a href="/2020/01/31/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/">【算法】非典型牛顿迭代法</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 吃草莓糖葫芦 的个人博客">吃草莓糖葫芦</a></p>
   <p><span>发布时间:</span>2020年01月31日 - 10:01</p>
-  <p><span>最后更新:</span>2020年01月31日 - 14:01</p>
+  <p><span>最后更新:</span>2020年02月03日 - 14:02</p>
   <p><span>原始链接:</span><a href="/2020/01/31/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/" title="【算法】非典型牛顿迭代法">https://tsuinterukonsigure.github.io/2020/01/31/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://tsuinterukonsigure.github.io/2020/01/31/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/"  aria-label="复制成功！"></i></span>
   </p>
@@ -590,7 +590,7 @@ x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​    
           
             <a href="/tags/%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0/" rel="tag"> <i class="fa fa-tag"></i> 个人学习</a>
           
-            <a href="/tags/C/" rel="tag"> <i class="fa fa-tag"></i> C++</a>
+            <a href="/tags/Python3/" rel="tag"> <i class="fa fa-tag"></i> Python3</a>
           
             <a href="/tags/%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/" rel="tag"> <i class="fa fa-tag"></i> 牛顿迭代法</a>
           
@@ -725,7 +725,7 @@ x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​    
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -845,7 +845,7 @@ x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​    
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">SIG0917全区域共 2.7k 个未知粒子</span>
+  <span class="post-count">SIG0917全区域共 2.6k 个未知粒子</span>
 </div>
 
         
