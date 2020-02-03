@@ -27,9 +27,9 @@
         <category>算法类</category>
       </categories>
       <tags>
-        <tag>动态规划</tag>
         <tag>个人学习</tag>
         <tag>Python3</tag>
+        <tag>动态规划</tag>
       </tags>
   </entry>
   <entry>
@@ -138,9 +138,9 @@ a_n=\frac{1}{\sqrt{5}}[{(\frac{1+\sqrt{5}}{2})}^n-{(\frac{1-\sqrt{5}}{2})}^n]</s
         <category>算法类</category>
       </categories>
       <tags>
-        <tag>个人学习</tag>
         <tag>递归算法</tag>
         <tag>C++</tag>
+        <tag>个人学习</tag>
       </tags>
   </entry>
   <entry>
@@ -163,12 +163,12 @@ f'(x)=2x</script><script type="math/tex; mode=display">
 x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​        则我们的迭代方程就是$x_{n+1}=\frac{x_n}{2}+\frac{n}{2x_n}$。</p>
 <p>​        现在要确定的是迭代终止条件，假设我们要求的精度是$0.00001$，则迭代终止的条件为$|x^2-n|&lt;0.00001$。</p>
 <p>​        由于$x=0$的时候，$n$的值就为$0$，所以我们将迭代的起点设置为$x=1$，所以我们的程序如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#Python3</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mySqrt</span><span class="params">(self, n: int)</span> -&gt; int:</span></span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">or</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="comment">#先处理特殊值</span></span><br><span class="line">    x0 = <span class="number">1.0</span></span><br><span class="line">    ran = abs(x0 * x0 - n) <span class="comment">#迭代停止信号</span></span><br><span class="line">    <span class="keyword">while</span> ran &gt; <span class="number">0.00001</span>:</span><br><span class="line">        x1 = x0 / <span class="number">2</span> + n / (x0 * <span class="number">2</span>)</span><br><span class="line">        x0 = x1</span><br><span class="line">        ran = abs(x1 * x1 - n)</span><br><span class="line">    <span class="keyword">return</span> x1</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#Python3</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mySqrt</span><span class="params">(self, n: int)</span> -&gt; float:</span></span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">or</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="comment">#先处理特殊值</span></span><br><span class="line">    x0 = <span class="number">1.0</span></span><br><span class="line">    ran = abs(x0 * x0 - n) <span class="comment">#迭代停止信号</span></span><br><span class="line">    <span class="keyword">while</span> ran &gt; <span class="number">0.00001</span>:</span><br><span class="line">        x1 = x0 / <span class="number">2</span> + n / (x0 * <span class="number">2</span>)</span><br><span class="line">        x0 = x1</span><br><span class="line">        ran = abs(x1 * x1 - n)</span><br><span class="line">    <span class="keyword">return</span> x1</span><br></pre></td></tr></table></figure>
 <p>​        当我们输入的值为<strong>2147395599</strong>时，输出<strong>46339.99998</strong>，输出耗时为32ms。而Python自带的<code>n**0.5</code>耗时60ms。</p>
 <hr>
 <h3 id="非典型算法"><a href="#非典型算法" class="headerlink" title="非典型算法"></a>非典型算法</h3><p>​        这里不得不提到神秘数字<strong>0x5f3759df</strong>，这个数字首次出现在游戏《雷神之锤III》的源代码中。</p>
 <p>​        在一个名为<code>q_math.c</code>的文件里出现了如下代码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">Q_rsqrt</span><span class="params">( <span class="keyword">float</span> number )</span> </span>&#123; </span><br><span class="line">   	<span class="keyword">long</span> i; <span class="keyword">float</span> x2, y; <span class="keyword">const</span> <span class="keyword">float</span> threehalfs = <span class="number">1.5F</span>;</span><br><span class="line">    x2 = number * <span class="number">0.5F</span>; </span><br><span class="line">    y = number; </span><br><span class="line">    i = * ( <span class="keyword">long</span> * ) &amp;y; <span class="comment">// evil floating point bit level hacking </span></span><br><span class="line">    i = <span class="number">0x5f3759df</span> - ( i &gt;&gt; <span class="number">1</span> ); <span class="comment">// what the fuck? </span></span><br><span class="line">    y = * ( <span class="keyword">float</span> * ) &amp;i; </span><br><span class="line">    y = y * ( threehalfs - ( x2 * y * y ) ); <span class="comment">// 1st iteration </span></span><br><span class="line">    <span class="comment">// y = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">ifndef</span> Q3_VM #</span></span><br><span class="line">    <span class="function">ifdef __linux__ <span class="title">assert</span><span class="params">( !isnan(y) )</span></span>; <span class="comment">// bk010122 - FPE?</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span> return y; </span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//C</span></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">Q_rsqrt</span><span class="params">( <span class="keyword">float</span> number )</span> </span>&#123; </span><br><span class="line">   	<span class="keyword">long</span> i; <span class="keyword">float</span> x2, y; <span class="keyword">const</span> <span class="keyword">float</span> threehalfs = <span class="number">1.5F</span>;</span><br><span class="line">    x2 = number * <span class="number">0.5F</span>; </span><br><span class="line">    y = number; </span><br><span class="line">    i = * ( <span class="keyword">long</span> * ) &amp;y; <span class="comment">// evil floating point bit level hacking </span></span><br><span class="line">    i = <span class="number">0x5f3759df</span> - ( i &gt;&gt; <span class="number">1</span> ); <span class="comment">// what the fuck? </span></span><br><span class="line">    y = * ( <span class="keyword">float</span> * ) &amp;i; </span><br><span class="line">    y = y * ( threehalfs - ( x2 * y * y ) ); <span class="comment">// 1st iteration </span></span><br><span class="line">    <span class="comment">// y = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">ifndef</span> Q3_VM #</span></span><br><span class="line">    <span class="function">ifdef __linux__ <span class="title">assert</span><span class="params">( !isnan(y) )</span></span>; <span class="comment">// bk010122 - FPE?</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span> return y; </span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
 <p>​        里面出现了一句让人抓毛的代码：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line">i = <span class="number">0x5f3759df</span> - ( i &gt;&gt; <span class="number">1</span> ); <span class="comment">// what the fuck?</span></span><br></pre></td></tr></table></figure>
 <p>​        这句代码和下面的两行一起</p>
@@ -184,8 +184,8 @@ x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​    
       </categories>
       <tags>
         <tag>个人学习</tag>
-        <tag>Python3</tag>
         <tag>牛顿迭代法</tag>
+        <tag>Python3</tag>
       </tags>
   </entry>
   <entry>
