@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://tsuinterukonsigure.github.io/"/>
-  <updated>2020-02-03T06:53:03.260Z</updated>
+  <updated>2020-02-04T06:32:05.084Z</updated>
   <id>https://tsuinterukonsigure.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【教程】教你修改cmd的可用字体</title>
+    <link href="https://tsuinterukonsigure.github.io/2020/02/04/%E3%80%90%E6%95%99%E7%A8%8B%E3%80%91%E6%95%99%E4%BD%A0%E4%BF%AE%E6%94%B9cmd%E7%9A%84%E5%8F%AF%E7%94%A8%E5%AD%97%E4%BD%93/"/>
+    <id>https://tsuinterukonsigure.github.io/2020/02/04/%E3%80%90%E6%95%99%E7%A8%8B%E3%80%91%E6%95%99%E4%BD%A0%E4%BF%AE%E6%94%B9cmd%E7%9A%84%E5%8F%AF%E7%94%A8%E5%AD%97%E4%BD%93/</id>
+    <published>2020-02-04T01:27:33.171Z</published>
+    <updated>2020-02-04T06:32:05.084Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="添加字体进注册表"><a href="#添加字体进注册表" class="headerlink" title="添加字体进注册表"></a>添加字体进注册表</h3><ul><li><p><code>Win+R</code>打开<strong>运行</strong>，输入<code>regedit</code>打开注册表。</p></li><li><p>进入<code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont</code></p><p>我们发现里面有ab字符串，默认有一个0和00。</p></li></ul><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd1.png?raw=true" alt="regedit"></p><ul><li>右键新建一个字符串，命名为<strong>000</strong>（每添加一个新的TrueType字体，就要在后面多加一个’0’），把数据设置为你想添加的字体的名称，如<code>JetBrains Mono</code>。</li></ul><hr><h3 id="设置Dos代码页"><a href="#设置Dos代码页" class="headerlink" title="设置Dos代码页"></a>设置Dos代码页</h3><p>​        在完成上述设置后，进入Dos界面的属性里面，可能仍然没有出现我们刚才添加的字体，这是因为我们默认的Dos代码页为<strong>936</strong>，如下图：</p><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd2.png?raw=true" alt="dos1" style="zoom: 80%;" /></p><p>​        接下来又是修改注册表：</p><ul><li>进入<code>HKEY_CURRENT_USER\Console\%SystemRoot%_system32_cmd.exe</code></li><li>修改二进制项<code>CodePage</code>的值为十六进制<code>1b5</code>或者十进制<code>437</code>。</li><li>关闭注册表，重新运行cmd.exe。</li><li>接下来就可以在属性里找到你最开始添加的字体进行使用了。</li></ul><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd3.png?raw=true" alt="cmd"></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;添加字体进注册表&quot;&gt;&lt;a href=&quot;#添加字体进注册表&quot; class=&quot;headerlink&quot; title=&quot;添加字体进注册表&quot;&gt;&lt;/a&gt;添加字体进注册表&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;Win+R&lt;/code&gt;打开&lt;strong&gt;运行&lt;/stron
+      
+    
+    </summary>
+    
+    
+      <category term="教程类" scheme="https://tsuinterukonsigure.github.io/categories/%E6%95%99%E7%A8%8B%E7%B1%BB/"/>
+    
+    
+      <category term="Dos个性化" scheme="https://tsuinterukonsigure.github.io/tags/Dos%E4%B8%AA%E6%80%A7%E5%8C%96/"/>
+    
+      <category term="注册表" scheme="https://tsuinterukonsigure.github.io/tags/%E6%B3%A8%E5%86%8C%E8%A1%A8/"/>
+    
+  </entry>
   
   <entry>
     <title>【算法】N皇后问题的回溯算法</title>
@@ -38,11 +67,11 @@
       <category term="算法类" scheme="https://tsuinterukonsigure.github.io/categories/%E7%AE%97%E6%B3%95%E7%B1%BB/"/>
     
     
+      <category term="动态规划" scheme="https://tsuinterukonsigure.github.io/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/"/>
+    
       <category term="个人学习" scheme="https://tsuinterukonsigure.github.io/tags/%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0/"/>
     
       <category term="Python3" scheme="https://tsuinterukonsigure.github.io/tags/Python3/"/>
-    
-      <category term="动态规划" scheme="https://tsuinterukonsigure.github.io/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/"/>
     
   </entry>
   
@@ -68,11 +97,11 @@
       <category term="算法类" scheme="https://tsuinterukonsigure.github.io/categories/%E7%AE%97%E6%B3%95%E7%B1%BB/"/>
     
     
+      <category term="个人学习" scheme="https://tsuinterukonsigure.github.io/tags/%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0/"/>
+    
       <category term="递归算法" scheme="https://tsuinterukonsigure.github.io/tags/%E9%80%92%E5%BD%92%E7%AE%97%E6%B3%95/"/>
     
       <category term="C++" scheme="https://tsuinterukonsigure.github.io/tags/C/"/>
-    
-      <category term="个人学习" scheme="https://tsuinterukonsigure.github.io/tags/%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   
@@ -100,9 +129,9 @@
     
       <category term="个人学习" scheme="https://tsuinterukonsigure.github.io/tags/%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0/"/>
     
-      <category term="牛顿迭代法" scheme="https://tsuinterukonsigure.github.io/tags/%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/"/>
-    
       <category term="Python3" scheme="https://tsuinterukonsigure.github.io/tags/Python3/"/>
+    
+      <category term="牛顿迭代法" scheme="https://tsuinterukonsigure.github.io/tags/%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/"/>
     
   </entry>
   

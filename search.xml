@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>【教程】教你修改cmd的可用字体</title>
+    <url>/2020/02/04/%E3%80%90%E6%95%99%E7%A8%8B%E3%80%91%E6%95%99%E4%BD%A0%E4%BF%AE%E6%94%B9cmd%E7%9A%84%E5%8F%AF%E7%94%A8%E5%AD%97%E4%BD%93/</url>
+    <content><![CDATA[<h3 id="添加字体进注册表"><a href="#添加字体进注册表" class="headerlink" title="添加字体进注册表"></a>添加字体进注册表</h3><ul>
+<li><p><code>Win+R</code>打开<strong>运行</strong>，输入<code>regedit</code>打开注册表。</p>
+</li>
+<li><p>进入<code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont</code></p>
+<p>我们发现里面有ab字符串，默认有一个0和00。</p>
+</li>
+</ul>
+<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd1.png?raw=true" alt="regedit"></p>
+<ul>
+<li>右键新建一个字符串，命名为<strong>000</strong>（每添加一个新的TrueType字体，就要在后面多加一个’0’），把数据设置为你想添加的字体的名称，如<code>JetBrains Mono</code>。</li>
+</ul>
+<hr>
+<h3 id="设置Dos代码页"><a href="#设置Dos代码页" class="headerlink" title="设置Dos代码页"></a>设置Dos代码页</h3><p>​        在完成上述设置后，进入Dos界面的属性里面，可能仍然没有出现我们刚才添加的字体，这是因为我们默认的Dos代码页为<strong>936</strong>，如下图：</p>
+<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd2.png?raw=true" alt="dos1" style="zoom: 80%;" /></p>
+<p>​        接下来又是修改注册表：</p>
+<ul>
+<li>进入<code>HKEY_CURRENT_USER\Console\%SystemRoot%_system32_cmd.exe</code></li>
+<li>修改二进制项<code>CodePage</code>的值为十六进制<code>1b5</code>或者十进制<code>437</code>。</li>
+<li>关闭注册表，重新运行cmd.exe。</li>
+<li>接下来就可以在属性里找到你最开始添加的字体进行使用了。</li>
+</ul>
+<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd3.png?raw=true" alt="cmd"></p>
+]]></content>
+      <categories>
+        <category>教程类</category>
+      </categories>
+      <tags>
+        <tag>Dos个性化</tag>
+        <tag>注册表</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【算法】N皇后问题的回溯算法</title>
     <url>/2020/02/02/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91N%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98%E7%9A%84%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>​        N皇后问题实际上是<strong>八皇后问题</strong>的拓展，需要在一个$n*n$大小的棋盘上放置$n$个皇后棋子，使这$n$个皇后不能互相攻击。即$n$个皇后不能处在同一条横线、竖线、45度斜线上。</p>
@@ -27,9 +61,9 @@
         <category>算法类</category>
       </categories>
       <tags>
+        <tag>动态规划</tag>
         <tag>个人学习</tag>
         <tag>Python3</tag>
-        <tag>动态规划</tag>
       </tags>
   </entry>
   <entry>
@@ -138,9 +172,9 @@ a_n=\frac{1}{\sqrt{5}}[{(\frac{1+\sqrt{5}}{2})}^n-{(\frac{1-\sqrt{5}}{2})}^n]</s
         <category>算法类</category>
       </categories>
       <tags>
+        <tag>个人学习</tag>
         <tag>递归算法</tag>
         <tag>C++</tag>
-        <tag>个人学习</tag>
       </tags>
   </entry>
   <entry>
@@ -184,8 +218,8 @@ x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​    
       </categories>
       <tags>
         <tag>个人学习</tag>
-        <tag>牛顿迭代法</tag>
         <tag>Python3</tag>
+        <tag>牛顿迭代法</tag>
       </tags>
   </entry>
   <entry>
