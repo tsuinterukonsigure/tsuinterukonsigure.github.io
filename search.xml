@@ -1,288 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title>【算法】Python中哈希表的使用</title>
-    <url>/2020/03/01/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91Python%E4%B8%AD%E5%93%88%E5%B8%8C%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<h2 id="💡引入概念"><a href="#💡引入概念" class="headerlink" title="💡引入概念"></a>💡引入概念</h2><h4 id="Hash-Map"><a href="#Hash-Map" class="headerlink" title="Hash Map"></a>Hash Map</h4><p>哈希表（Hash Map），又称作散列表。它是根据关键码值（<code>Key</code>, <code>Value</code>）对数据进行访问的一种数据结构。在Python中，与列表不同的是，哈希表通过<strong>键</strong>来直接访问数据，而列表通过数字下标访问。</p>
-<p>对不同的关键字，可能会得到同一个散列地址，即同一个<code>Value</code>，可能会有不同的<code>Key</code>同时指向。这种现象我们称为<strong>冲突</strong>，具有相同函数值的关键字在哈希表中被叫做<strong>同义词</strong>。</p>
-<p>而在Python中，<strong>字典（directory）</strong>就是哈希表的一个实现。</p>
-<h4 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h4><p>以下是Python中的一个字典：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">dict_1 = &#123;<span class="string">'a'</span>: <span class="number">1</span>, <span class="string">'b'</span>: <span class="number">2</span>, <span class="string">'c'</span>: <span class="number">3</span>&#125;</span><br></pre></td></tr></table></figure>
-<p>字典的每个键值对（key : value）之间用逗号分隔，整体使用大括号包围起来。</p>
-<p>字典中，可以有重复的<code>value</code>，但不允许存在存在重复的<code>key</code>，但是使用重复的<code>key</code>并不会报错，而是在读取这个<code>key</code>的时候，总是取右边（后面）的值。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>ex_dict = &#123;<span class="string">'a'</span>: <span class="number">1</span>, <span class="string">'b'</span>: <span class="number">2</span>, <span class="string">'b'</span>: <span class="number">3</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'ex_dict['</span><span class="string">b']: '</span>), ex_dict[<span class="string">'b'</span>]</span><br><span class="line"></span><br><span class="line">ex_dict: <span class="number">3</span></span><br></pre></td></tr></table></figure>
-<hr>
-<h2 id="🔨优化举例"><a href="#🔨优化举例" class="headerlink" title="🔨优化举例"></a>🔨优化举例</h2><h4 id="实例题目"><a href="#实例题目" class="headerlink" title="实例题目"></a>实例题目</h4><p>给定一个整数数组 <em>nums</em> 和一个整数 <em>k</em> ，判断数组中是否<strong>存在</strong>两个不同的索引 <em>i</em> 和 <em>j</em> ，使得<strong>nums[i] == nums[j]</strong>，并且 <em>i</em> 和 <em>j</em> 差的绝对值的最大值为 <em>k</em> 。要求所用时间尽量短。</p>
-<p>例1：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">in : nums &#x3D; [1, 2, 3, 1], k &#x3D; 3</span><br><span class="line">out: True</span><br></pre></td></tr></table></figure>
-<p>例2：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">in : nums &#x3D; [1, 2, 3, 1, 2, 3], k &#x3D; 2</span><br><span class="line">out: False</span><br></pre></td></tr></table></figure>
-<p>难度：★★☆☆☆</p>
-<h4 id="未优化做法"><a href="#未优化做法" class="headerlink" title="未优化做法"></a>未优化做法</h4><p>如果不使用字典，直接按照一般思路，如下面这个代码：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">solution</span><span class="params">(nums: List[int], k: int)</span> -&gt; bool:</span></span><br><span class="line">    <span class="keyword">if</span> len(nums) &lt;= <span class="number">1</span>: </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(nums)<span class="number">-1</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i+<span class="number">1</span>, len(nums)):</span><br><span class="line">            <span class="keyword">if</span> nums[i] == nums[j] <span class="keyword">and</span> abs(i-j) &lt;= k:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure>
-<p>这个算法的时间复杂度很高，嵌套了两个循环。在 <em>nums</em> 中的元素不多的时候还能凑合使用，可一旦 <em>nums</em> 中含有大量的元素（$n&gt;=30000$）且相等元素间隔大时，很容易会出现超时的错误。</p>
-<p>怎样才能在一次循环内将答案确定呢？</p>
-<h4 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h4><p>给定一个在列表 <em>nums</em> 中的值 <em>a</em> ，要找到和其相等的值，如果通过下标来查找，必然要遍历一次 <em>nums</em> 。而要针对每一个元素都要去查找相同的值，就要嵌套又一层遍历。</p>
-<p>如果将每一个 <em>nums[i]</em> 的值作为一个唯一的标识去对应下标 <em>i</em> ，即<code>Key</code>是 <em>nums[i]</em> ，而<code>Value</code>是 <em>i</em> 。这样就可以避免重复查找。</p>
-<p>为此，我们需要使用Python中的<strong>字典</strong>。</p>
-<p>代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">solution</span><span class="params">(nums: List[int], k: int)</span> -&gt; bool:</span></span><br><span class="line">    nums_len = len(nums)</span><br><span class="line">    <span class="keyword">if</span> nums_len &lt;= <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    nums_dict = &#123;&#125;					<span class="comment">#用于查找的字典</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(nums_len):</span><br><span class="line">        <span class="keyword">if</span> nums[i] <span class="keyword">in</span> nums_dict:			<span class="comment">#如果字典有这个键，说明此时查找到了相等的值</span></span><br><span class="line">            <span class="keyword">if</span> i - nums_dict[nums[i]] &lt;= k:		<span class="comment">#再判断其是否满足下标差的绝对值不大于k</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        nums_dict[nums[i]] = i				<span class="comment">#没有在字典里的，以列表里的值为键，索引为值加入</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure>
-<p>如此一来，只用一次遍历，就可以完成整个过程。</p>
-<p>这个算法的重点就是将列表元素的值作为关键字，而索引成为了值，由于索引不会重复，所以节省了许多不必要的时间，使得算法的复杂度降低了，达到了优化的效果。</p>
-]]></content>
+<search> 
+  
+  
+    
+    <entry>
+      <title>【算法】Python中哈希表的使用</title>
+      <link href="/2020/03/01/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91Python%E4%B8%AD%E5%93%88%E5%B8%8C%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
+      <url>/2020/03/01/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91Python%E4%B8%AD%E5%93%88%E5%B8%8C%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+      
+        <content type="html"><![CDATA[<h2 id="💡引入概念"><a href="#💡引入概念" class="headerlink" title="💡引入概念"></a>💡引入概念</h2><h4 id="Hash-Map"><a href="#Hash-Map" class="headerlink" title="Hash Map"></a>Hash Map</h4><p>哈希表（Hash Map），又称作散列表。它是根据关键码值（<code>Key</code>, <code>Value</code>）对数据进行访问的一种数据结构。在Python中，与列表不同的是，哈希表通过<strong>键</strong>来直接访问数据，而列表通过数字下标访问。</p><p>对不同的关键字，可能会得到同一个散列地址，即同一个<code>Value</code>，可能会有不同的<code>Key</code>同时指向。这种现象我们称为<strong>冲突</strong>，具有相同函数值的关键字在哈希表中被叫做<strong>同义词</strong>。</p><p>而在Python中，<strong>字典（directory）</strong>就是哈希表的一个实现。</p><h4 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h4><p>以下是Python中的一个字典：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dict_1 = &#123;<span class="string">'a'</span>: <span class="number">1</span>, <span class="string">'b'</span>: <span class="number">2</span>, <span class="string">'c'</span>: <span class="number">3</span>&#125;</span><br></pre></td></tr></table></figure><p>字典的每个键值对（key : value）之间用逗号分隔，整体使用大括号包围起来。</p><p>字典中，可以有重复的<code>value</code>，但不允许存在存在重复的<code>key</code>，但是使用重复的<code>key</code>并不会报错，而是在读取这个<code>key</code>的时候，总是取右边（后面）的值。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>ex_dict = &#123;<span class="string">'a'</span>: <span class="number">1</span>, <span class="string">'b'</span>: <span class="number">2</span>, <span class="string">'b'</span>: <span class="number">3</span>&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(<span class="string">'ex_dict['</span><span class="string">b']: '</span>), ex_dict[<span class="string">'b'</span>]</span><br><span class="line"></span><br><span class="line">ex_dict: <span class="number">3</span></span><br></pre></td></tr></table></figure><hr><h2 id="🔨优化举例"><a href="#🔨优化举例" class="headerlink" title="🔨优化举例"></a>🔨优化举例</h2><h4 id="实例题目"><a href="#实例题目" class="headerlink" title="实例题目"></a>实例题目</h4><p>给定一个整数数组 <em>nums</em> 和一个整数 <em>k</em> ，判断数组中是否<strong>存在</strong>两个不同的索引 <em>i</em> 和 <em>j</em> ，使得<strong>nums[i] == nums[j]</strong>，并且 <em>i</em> 和 <em>j</em> 差的绝对值的最大值为 <em>k</em> 。要求所用时间尽量短。</p><p>例1：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">in : nums &#x3D; [1, 2, 3, 1], k &#x3D; 3</span><br><span class="line">out: True</span><br></pre></td></tr></table></figure><p>例2：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">in : nums &#x3D; [1, 2, 3, 1, 2, 3], k &#x3D; 2</span><br><span class="line">out: False</span><br></pre></td></tr></table></figure><p>难度：★★☆☆☆</p><h4 id="未优化做法"><a href="#未优化做法" class="headerlink" title="未优化做法"></a>未优化做法</h4><p>如果不使用字典，直接按照一般思路，如下面这个代码：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">solution</span><span class="params">(nums: List[int], k: int)</span> -&gt; bool:</span></span><br><span class="line">    <span class="keyword">if</span> len(nums) &lt;= <span class="number">1</span>: </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(nums)<span class="number">-1</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i+<span class="number">1</span>, len(nums)):</span><br><span class="line">            <span class="keyword">if</span> nums[i] == nums[j] <span class="keyword">and</span> abs(i-j) &lt;= k:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure><p>这个算法的时间复杂度很高，嵌套了两个循环。在 <em>nums</em> 中的元素不多的时候还能凑合使用，可一旦 <em>nums</em> 中含有大量的元素（$n&gt;=30000$）且相等元素间隔大时，很容易会出现超时的错误。</p><p>怎样才能在一次循环内将答案确定呢？</p><h4 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h4><p>给定一个在列表 <em>nums</em> 中的值 <em>a</em> ，要找到和其相等的值，如果通过下标来查找，必然要遍历一次 <em>nums</em> 。而要针对每一个元素都要去查找相同的值，就要嵌套又一层遍历。</p><p>如果将每一个 <em>nums[i]</em> 的值作为一个唯一的标识去对应下标 <em>i</em> ，即<code>Key</code>是 <em>nums[i]</em> ，而<code>Value</code>是 <em>i</em> 。这样就可以避免重复查找。</p><p>为此，我们需要使用Python中的<strong>字典</strong>。</p><p>代码如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">solution</span><span class="params">(nums: List[int], k: int)</span> -&gt; bool:</span></span><br><span class="line">    nums_len = len(nums)</span><br><span class="line">    <span class="keyword">if</span> nums_len &lt;= <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    nums_dict = &#123;&#125;<span class="comment">#用于查找的字典</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(nums_len):</span><br><span class="line">        <span class="keyword">if</span> nums[i] <span class="keyword">in</span> nums_dict:<span class="comment">#如果字典有这个键，说明此时查找到了相等的值</span></span><br><span class="line">            <span class="keyword">if</span> i - nums_dict[nums[i]] &lt;= k:<span class="comment">#再判断其是否满足下标差的绝对值不大于k</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        nums_dict[nums[i]] = i<span class="comment">#没有在字典里的，以列表里的值为键，索引为值加入</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure><p>如此一来，只用一次遍历，就可以完成整个过程。</p><p>这个算法的重点就是将列表元素的值作为关键字，而索引成为了值，由于索引不会重复，所以节省了许多不必要的时间，使得算法的复杂度降低了，达到了优化的效果。</p>]]></content>
+      
+      
       <categories>
-        <category>算法类</category>
+          
+          <category> 算法类 </category>
+          
       </categories>
-      <tags>
-        <tag>Python3</tag>
-        <tag>字典</tag>
-        <tag>哈希表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【教程】教你修改cmd的可用字体</title>
-    <url>/2020/02/04/%E3%80%90%E6%95%99%E7%A8%8B%E3%80%91%E6%95%99%E4%BD%A0%E4%BF%AE%E6%94%B9cmd%E7%9A%84%E5%8F%AF%E7%94%A8%E5%AD%97%E4%BD%93/</url>
-    <content><![CDATA[<h3 id="添加字体进注册表"><a href="#添加字体进注册表" class="headerlink" title="添加字体进注册表"></a>添加字体进注册表</h3><ul>
-<li><p><code>Win+R</code>打开<strong>运行</strong>，输入<code>regedit</code>打开注册表。</p>
-</li>
-<li><p>进入<code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont</code></p>
-<p>我们发现里面有ab字符串，默认有一个0和00。</p>
-</li>
-</ul>
-<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd1.png?raw=true" alt="regedit"></p>
-<ul>
-<li>右键新建一个字符串，命名为<strong>000</strong>（每添加一个新的TrueType字体，就要在后面多加一个’0’），把数据设置为你想添加的字体的名称，如<code>JetBrains Mono</code>。</li>
-</ul>
-<hr>
-<h3 id="设置Dos代码页"><a href="#设置Dos代码页" class="headerlink" title="设置Dos代码页"></a>设置Dos代码页</h3><p>​        在完成上述设置后，进入Dos界面的属性里面，可能仍然没有出现我们刚才添加的字体，这是因为我们默认的Dos代码页为<strong>936</strong>，如下图：</p>
-<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd2.png?raw=true" alt="dos1" style="zoom: 80%;" /></p>
-<p>​        接下来又是修改注册表：</p>
-<ul>
-<li>进入<code>HKEY_CURRENT_USER\Console\%SystemRoot%_system32_cmd.exe</code></li>
-<li>修改二进制项<code>CodePage</code>的值为十六进制<code>1b5</code>或者十进制<code>437</code>。</li>
-<li>关闭注册表，重新运行cmd.exe。</li>
-<li>接下来就可以在属性里找到你最开始添加的字体进行使用了。</li>
-</ul>
-<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd3.png?raw=true" alt="cmd"></p>
-]]></content>
+      
+      
+        <tags>
+            
+            <tag> Python3 </tag>
+            
+            <tag> 字典 </tag>
+            
+            <tag> 哈希表 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>【教程】教你修改cmd的可用字体</title>
+      <link href="/2020/02/04/%E3%80%90%E6%95%99%E7%A8%8B%E3%80%91%E6%95%99%E4%BD%A0%E4%BF%AE%E6%94%B9cmd%E7%9A%84%E5%8F%AF%E7%94%A8%E5%AD%97%E4%BD%93/"/>
+      <url>/2020/02/04/%E3%80%90%E6%95%99%E7%A8%8B%E3%80%91%E6%95%99%E4%BD%A0%E4%BF%AE%E6%94%B9cmd%E7%9A%84%E5%8F%AF%E7%94%A8%E5%AD%97%E4%BD%93/</url>
+      
+        <content type="html"><![CDATA[<h3 id="添加字体进注册表"><a href="#添加字体进注册表" class="headerlink" title="添加字体进注册表"></a>添加字体进注册表</h3><ul><li><p><code>Win+R</code>打开<strong>运行</strong>，输入<code>regedit</code>打开注册表。</p></li><li><p>进入<code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont</code></p><p>我们发现里面有ab字符串，默认有一个0和00。</p></li></ul><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd1.png?raw=true" alt="regedit"></p><ul><li>右键新建一个字符串，命名为<strong>000</strong>（每添加一个新的TrueType字体，就要在后面多加一个’0’），把数据设置为你想添加的字体的名称，如<code>JetBrains Mono</code>。</li></ul><hr><h3 id="设置Dos代码页"><a href="#设置Dos代码页" class="headerlink" title="设置Dos代码页"></a>设置Dos代码页</h3><p>​        在完成上述设置后，进入Dos界面的属性里面，可能仍然没有出现我们刚才添加的字体，这是因为我们默认的Dos代码页为<strong>936</strong>，如下图：</p><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd2.png?raw=true" alt="dos1" style="zoom: 80%;" /></p><p>​        接下来又是修改注册表：</p><ul><li>进入<code>HKEY_CURRENT_USER\Console\%SystemRoot%_system32_cmd.exe</code></li><li>修改二进制项<code>CodePage</code>的值为十六进制<code>1b5</code>或者十进制<code>437</code>。</li><li>关闭注册表，重新运行cmd.exe。</li><li>接下来就可以在属性里找到你最开始添加的字体进行使用了。</li></ul><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/cmd3.png?raw=true" alt="cmd"></p>]]></content>
+      
+      
       <categories>
-        <category>教程类</category>
+          
+          <category> 教程类 </category>
+          
       </categories>
-      <tags>
-        <tag>Dos个性化</tag>
-        <tag>注册表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【算法】N皇后问题的回溯算法</title>
-    <url>/2020/02/02/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91N%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98%E7%9A%84%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>​        N皇后问题实际上是<strong>八皇后问题</strong>的拓展，需要在一个$n*n$大小的棋盘上放置$n$个皇后棋子，使这$n$个皇后不能互相攻击。即$n$个皇后不能处在同一条横线、竖线、45度斜线上。</p>
-<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/nqueen1.png?raw=true" alt="Queen"></p>
-<p>​        现在要求输入一个整数<code>n</code>，输出<code>n</code>个皇后所有可能的排列方式。（棋盘大小也相应变成<code>n</code>*<code>n</code>）</p>
-<hr>
-<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>​        若我们之间采用暴力的方法解这道题，由于棋盘大小为$n*n$，则这种方法的时间复杂度为$O(n^n)$，为此我们必须采用别的算法。</p>
-<p>​        这道题要用到两个编程概念，一个是<strong>约束</strong>，一个是<strong>回溯</strong>。</p>
-<p>​        <strong>约束编程</strong>的解释是，每新放置一个皇后，就要增加后续放置的限制。比如放置了一个皇后之后，行、列和对角线上都不能再进行放置。</p>
-<p>​        <strong>回溯算法</strong>，即DFS。假如我们进行筛选的时候，出现了不符合题设条件的情况，比如在一种方案中出现了不能继续放置皇后的情况。此时我们需要回退到上一步，这就是回溯。</p>
-<blockquote>
-<p>下面的代码很好的解释了<strong>回溯</strong>。</p>
-</blockquote>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#Python</span></span><br><span class="line">result = []</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">backtrack</span><span class="params">(路径, 选择列表)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> 满足结束条件:</span><br><span class="line">        result.add(路径)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> 选择 <span class="keyword">in</span> 选择列表:</span><br><span class="line">        做选择</span><br><span class="line">        backtrack(路径, 选择列表)</span><br><span class="line">        撤销选择</span><br></pre></td></tr></table></figure>
-<hr>
-<h3 id="回溯"><a href="#回溯" class="headerlink" title="回溯"></a>回溯</h3><p>​        我们要利用回溯的思路，逐行进行迭代，在每一行循环放置Queen来检查所有可能的组合。</p>
-<p>​        每次放置完，就要添加限制，为此我们设置了<code>col</code>用来存放不能再放置Queen的列，以及<code>diag1</code>和<code>diag2</code>来存放不能放置Queen的主副对角线。如此一来每次放置完成，就向这些集合内增加数据，之后的放置就要利用<code>col</code>, <code>diag1</code>, <code>diag2</code>进行判定，若符合条件才继续进行迭代，否则就会回退。</p>
-<p>​        Python代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#Python</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">nQueens</span><span class="params">(self, n)</span>:</span></span><br><span class="line">    result = []</span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span>: <span class="keyword">return</span> res</span><br><span class="line">    <span class="comment">#row是当前行，col是不能使用的列集，diag1和diag2分别为不能使用的两侧对角线集</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">DFS</span><span class="params">(row, col, diag1, diag2, cur_result, n)</span>:</span></span><br><span class="line">        <span class="comment">#'-'代表空格，即没有存放皇后的地方</span></span><br><span class="line">        <span class="keyword">if</span> row == n:</span><br><span class="line">        	result.append([<span class="string">'-'</span> * cur + <span class="string">'Q'</span> + <span class="string">'-'</span> * (n - cur - <span class="number">1</span>) <span class="keyword">for</span> cur <span class="keyword">in</span> cur_result])</span><br><span class="line">        	<span class="keyword">return</span></span><br><span class="line">    	<span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">            <span class="keyword">if</span> (i <span class="keyword">not</span> <span class="keyword">in</span> col) <span class="keyword">and</span> (i - row <span class="keyword">not</span> <span class="keyword">in</span> diag1) <span class="keyword">and</span> (i + row <span class="keyword">not</span> <span class="keyword">in</span> diag2):</span><br><span class="line">                DFS(row + <span class="number">1</span>, col|&#123;i&#125;, diag1|&#123;i-row&#125;, diag2|&#123;i+row&#125;, cur_result + [i], n)</span><br><span class="line">                </span><br><span class="line">    DFS(<span class="number">0</span>, set(), set(), set(), [], n)</span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
-<hr>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>【1】<a href="https://baike.baidu.com/item/%E5%85%AB%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98" target="_blank" rel="noopener">八皇后问题—百度百科</a></p>
-]]></content>
+      
+      
+        <tags>
+            
+            <tag> Dos个性化 </tag>
+            
+            <tag> 注册表 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>【算法】N皇后问题的回溯算法</title>
+      <link href="/2020/02/02/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91N%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98%E7%9A%84%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/"/>
+      <url>/2020/02/02/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91N%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98%E7%9A%84%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/</url>
+      
+        <content type="html"><![CDATA[<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>​        N皇后问题实际上是<strong>八皇后问题</strong>的拓展，需要在一个$n*n$大小的棋盘上放置$n$个皇后棋子，使这$n$个皇后不能互相攻击。即$n$个皇后不能处在同一条横线、竖线、45度斜线上。</p><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/nqueen1.png?raw=true" alt="Queen"></p><p>​        现在要求输入一个整数<code>n</code>，输出<code>n</code>个皇后所有可能的排列方式。（棋盘大小也相应变成<code>n</code>*<code>n</code>）</p><hr><h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>​        若我们之间采用暴力的方法解这道题，由于棋盘大小为$n*n$，则这种方法的时间复杂度为$O(n^n)$，为此我们必须采用别的算法。</p><p>​        这道题要用到两个编程概念，一个是<strong>约束</strong>，一个是<strong>回溯</strong>。</p><p>​        <strong>约束编程</strong>的解释是，每新放置一个皇后，就要增加后续放置的限制。比如放置了一个皇后之后，行、列和对角线上都不能再进行放置。</p><p>​        <strong>回溯算法</strong>，即DFS。假如我们进行筛选的时候，出现了不符合题设条件的情况，比如在一种方案中出现了不能继续放置皇后的情况。此时我们需要回退到上一步，这就是回溯。</p><blockquote><p>下面的代码很好的解释了<strong>回溯</strong>。</p></blockquote><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Python</span></span><br><span class="line">result = []</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">backtrack</span><span class="params">(路径, 选择列表)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> 满足结束条件:</span><br><span class="line">        result.add(路径)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> 选择 <span class="keyword">in</span> 选择列表:</span><br><span class="line">        做选择</span><br><span class="line">        backtrack(路径, 选择列表)</span><br><span class="line">        撤销选择</span><br></pre></td></tr></table></figure><hr><h3 id="回溯"><a href="#回溯" class="headerlink" title="回溯"></a>回溯</h3><p>​        我们要利用回溯的思路，逐行进行迭代，在每一行循环放置Queen来检查所有可能的组合。</p><p>​        每次放置完，就要添加限制，为此我们设置了<code>col</code>用来存放不能再放置Queen的列，以及<code>diag1</code>和<code>diag2</code>来存放不能放置Queen的主副对角线。如此一来每次放置完成，就向这些集合内增加数据，之后的放置就要利用<code>col</code>, <code>diag1</code>, <code>diag2</code>进行判定，若符合条件才继续进行迭代，否则就会回退。</p><p>​        Python代码如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Python</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">nQueens</span><span class="params">(self, n)</span>:</span></span><br><span class="line">    result = []</span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span>: <span class="keyword">return</span> res</span><br><span class="line">    <span class="comment">#row是当前行，col是不能使用的列集，diag1和diag2分别为不能使用的两侧对角线集</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">DFS</span><span class="params">(row, col, diag1, diag2, cur_result, n)</span>:</span></span><br><span class="line">        <span class="comment">#'-'代表空格，即没有存放皇后的地方</span></span><br><span class="line">        <span class="keyword">if</span> row == n:</span><br><span class="line">        result.append([<span class="string">'-'</span> * cur + <span class="string">'Q'</span> + <span class="string">'-'</span> * (n - cur - <span class="number">1</span>) <span class="keyword">for</span> cur <span class="keyword">in</span> cur_result])</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(n):</span><br><span class="line">            <span class="keyword">if</span> (i <span class="keyword">not</span> <span class="keyword">in</span> col) <span class="keyword">and</span> (i - row <span class="keyword">not</span> <span class="keyword">in</span> diag1) <span class="keyword">and</span> (i + row <span class="keyword">not</span> <span class="keyword">in</span> diag2):</span><br><span class="line">                DFS(row + <span class="number">1</span>, col|&#123;i&#125;, diag1|&#123;i-row&#125;, diag2|&#123;i+row&#125;, cur_result + [i], n)</span><br><span class="line">                </span><br><span class="line">    DFS(<span class="number">0</span>, set(), set(), set(), [], n)</span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure><hr><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>【1】<a href="https://baike.baidu.com/item/%E5%85%AB%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98" target="_blank" rel="noopener">八皇后问题—百度百科</a></p>]]></content>
+      
+      
       <categories>
-        <category>算法类</category>
+          
+          <category> 算法类 </category>
+          
       </categories>
-      <tags>
-        <tag>动态规划</tag>
-        <tag>个人学习</tag>
-        <tag>Python3</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【算法】多方法求斐波那契函数</title>
-    <url>/2020/02/01/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E5%A4%9A%E6%96%B9%E6%B3%95%E6%B1%82%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E5%87%BD%E6%95%B0/</url>
-    <content><![CDATA[<h3 id="关于斐波那契函数"><a href="#关于斐波那契函数" class="headerlink" title="关于斐波那契函数"></a>关于斐波那契函数</h3><p>​        斐波那契函数$F(N)$是由<strong>斐波那契数列</strong>得到，该数列从$0$和$1$开始，之后的每一项都由前两项相加得到，即有</p>
-<script type="math/tex; mode=display">
-F(0)=0, F(1)=1</script><script type="math/tex; mode=display">
-F(N)=F(N-1)+F(N-2)</script><p>​        对斐波那契函数求值，就是给定一个<code>N</code>值，返回$F(N)$的值。</p>
-<h3 id="递归法"><a href="#递归法" class="headerlink" title="递归法"></a>递归法</h3><ul>
-<li>检查<code>N</code>的值，如果<code>N &lt;= 1</code>，则将<code>N</code>的值返回。</li>
-<li>若<code>N &gt; 1</code>，则通过调用$N=F(N-1)+F(N-2)$来递归，最终返回<code>N</code>的值。</li>
-</ul>
-<hr>
-<p>​        <code>C++</code>代码实现如下：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N &lt;= <span class="number">1</span>) <span class="keyword">return</span> N;</span><br><span class="line">    N = fib(N - <span class="number">1</span>) + fib(N - <span class="number">2</span>); <span class="comment">//递归过程</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> N;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>时间复杂度：$O(2^n)$.</p>
-<p>这是计算斐波那契函数最慢的一种方法，但其实现起来比较方便，也更容易想到。</p>
-</li>
-<li><p>空间复杂度：$O(n)$.</p>
-<p>为了跟踪<code>fib</code>函数的调用，我们需要与<code>N</code>成正比的空间大小。</p>
-</li>
-</ul>
-<h3 id="自下而上迭代"><a href="#自下而上迭代" class="headerlink" title="自下而上迭代"></a>自下而上迭代</h3><ul>
-<li>若<code>N &lt;= 1</code>，返回<code>N</code>的值。</li>
-<li>迭代至<code>N</code>，将各个计算得到的值存在一个数组里。</li>
-<li>每次迭代用数组当前位置的前两个数得到当前的数。</li>
-<li>返回数组中的第<code>N</code>个值。</li>
-</ul>
-<hr>
-<p>​        <code>C++</code>代码实现如下：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N &lt;= <span class="number">1</span>) <span class="keyword">return</span> N;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">    res.push_back(<span class="number">0</span>);</span><br><span class="line">    res.push_back(<span class="number">1</span>); <span class="comment">//先将0和1存入数组</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; N; i++) &#123;</span><br><span class="line">        res.push_back(res[i - <span class="number">1</span>] + res[i - <span class="number">2</span>]); <span class="comment">//当前位置的值由前两个数相加得到</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> res[N - <span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>时间复杂度：$O(n)$</p>
-<p>迭代了N次。</p>
-</li>
-<li><p>空间复杂度：$O(n)$</p>
-<p>使用了大小为N的数组。</p>
-</li>
-</ul>
-<h3 id="求幂矩阵"><a href="#求幂矩阵" class="headerlink" title="求幂矩阵"></a>求幂矩阵</h3><p>​        我们知道，斐波那契数列矩阵方程为：</p>
-<script type="math/tex; mode=display">
-\left[
-\begin{matrix}
-f(n)\\
-f(n-1)
-\end{matrix}
-\right]
-=
-\left[
-\begin{matrix}
-1&1\\
-1&0
-\end{matrix}
-\right]
-\left[
-\begin{matrix}
-f(n-1)\\
-f(n-2)
-\end{matrix}
-\right]
-=
-{\left[
-\begin{matrix}
-1&1\\
-1&0
-\end{matrix}
-\right]}^{n-1}
-\left[
-\begin{matrix}
-f(1)\\
-f(0)
-\end{matrix}
-\right]</script><p>​        通过矩阵求幂即可得到$F(N)$的值。</p>
-<ul>
-<li>若<code>N &lt;= 1</code>，返回<code>N</code>的值。</li>
-<li>计算<code>{[1, 1], [1, 0]}</code>的<code>N - 1</code>次方得到的矩阵。</li>
-<li>由于该矩阵乘以<code>{[1], [0]}</code>后，第一个元素就是$F(N)$的值，所以返回。</li>
-</ul>
-<hr>
-<p>​        <code>C++</code>代码实现如下：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N &lt;= <span class="number">1</span>) <span class="keyword">return</span> N;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; A = &#123;&#123;<span class="number">1</span>, <span class="number">1</span>&#125;, &#123;<span class="number">1</span>, <span class="number">0</span>&#125;&#125;;</span><br><span class="line">    recursiveMatrix(A, N - <span class="number">1</span>); <span class="comment">//求幂</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> A[<span class="number">0</span>][<span class="number">0</span>]；</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> mutip(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; A, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; B) &#123;</span><br><span class="line">    <span class="keyword">int</span> a = A[<span class="number">0</span>][<span class="number">0</span>] * B[<span class="number">0</span>][<span class="number">0</span>] + A[<span class="number">0</span>][<span class="number">1</span>] * B[<span class="number">1</span>][<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">int</span> b = A[<span class="number">0</span>][<span class="number">0</span>] * B[<span class="number">0</span>][<span class="number">1</span>] + A[<span class="number">0</span>][<span class="number">1</span>] * B[<span class="number">1</span>][<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span> c = A[<span class="number">1</span>][<span class="number">0</span>] * B[<span class="number">0</span>][<span class="number">0</span>] + A[<span class="number">1</span>][<span class="number">1</span>] * B[<span class="number">1</span>][<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">int</span> d = A[<span class="number">1</span>][<span class="number">0</span>] * B[<span class="number">0</span>][<span class="number">1</span>] + A[<span class="number">1</span>][<span class="number">1</span>] * B[<span class="number">1</span>][<span class="number">1</span>];</span><br><span class="line">    <span class="comment">//矩阵相乘的实现</span></span><br><span class="line">    A[<span class="number">0</span>][<span class="number">0</span>] = a;</span><br><span class="line">    A[<span class="number">0</span>][<span class="number">1</span>] = b;</span><br><span class="line">    A[<span class="number">1</span>][<span class="number">0</span>] = c;</span><br><span class="line">    A[<span class="number">1</span>][<span class="number">1</span>] = d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">recursiveMatrix</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; A, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N &lt;= <span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line">    recursiveMatrix(A, N/<span class="number">2</span>);</span><br><span class="line">    mutip(A, A); </span><br><span class="line">    <span class="comment">//二分求幂，A即为求幂之后的矩阵</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; B = &#123;&#123;<span class="number">1</span>, <span class="number">1</span>&#125;, &#123;<span class="number">1</span>, <span class="number">0</span>&#125;&#125;; <span class="comment">//由于A的值会变化，B用于存储源矩阵</span></span><br><span class="line">    <span class="keyword">if</span>(N % <span class="number">2</span> != <span class="number">0</span>) &#123;</span><br><span class="line">        mutip(A, B);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>时间复杂度：$O(logN)$.</li>
-<li>空间复杂度：$O(logN)$.</li>
-</ul>
-<h3 id="黄金分割比"><a href="#黄金分割比" class="headerlink" title="黄金分割比"></a>黄金分割比</h3><p>​        <strong>Binet公式</strong>求斐波那契数列的第$n$项时用到了黄金分割比$\varphi$。</p>
-<script type="math/tex; mode=display">
-a_n=\frac{1}{\sqrt{5}}[{(\frac{1+\sqrt{5}}{2})}^n-{(\frac{1-\sqrt{5}}{2})}^n]</script><ul>
-<li>直接使用Binet公式计算$F(N)$的值。</li>
-</ul>
-<hr>
-<p>​        <code>C++</code>代码实现如下：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">double</span> g = (<span class="number">1</span> + <span class="built_in">sqrt</span>(<span class="number">5</span>)) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">double</span> h = (<span class="number">1</span> - <span class="built_in">sqrt</span>(<span class="number">5</span>)) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> / <span class="built_in">sqrt</span>(<span class="number">5</span>) * (<span class="built_in">pow</span>(g, N) - <span class="built_in">pow</span>(h, N));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>时间复杂度：$O(1)$.</p>
-<p>没有使用任何迭代或者递归。</p>
-</li>
-<li><p>空间复杂度：$O(1)$.</p>
-</li>
-</ul>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>【1】<a href="https://leetcode-cn.com/problems/fibonacci-number/solution/fei-bo-na-qi-shu-by-leetcode/" target="_blank" rel="noopener">Leetcode斐波那契数</a>.</p>
-]]></content>
+      
+      
+        <tags>
+            
+            <tag> Python3 </tag>
+            
+            <tag> 个人学习 </tag>
+            
+            <tag> 动态规划 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>【算法】多方法求斐波那契函数</title>
+      <link href="/2020/02/01/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E5%A4%9A%E6%96%B9%E6%B3%95%E6%B1%82%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E5%87%BD%E6%95%B0/"/>
+      <url>/2020/02/01/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E5%A4%9A%E6%96%B9%E6%B3%95%E6%B1%82%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E5%87%BD%E6%95%B0/</url>
+      
+        <content type="html"><![CDATA[<h3 id="关于斐波那契函数"><a href="#关于斐波那契函数" class="headerlink" title="关于斐波那契函数"></a>关于斐波那契函数</h3><p>​        斐波那契函数$F(N)$是由<strong>斐波那契数列</strong>得到，该数列从$0$和$1$开始，之后的每一项都由前两项相加得到，即有</p><script type="math/tex; mode=display">F(0)=0, F(1)=1</script><script type="math/tex; mode=display">F(N)=F(N-1)+F(N-2)</script><p>​        对斐波那契函数求值，就是给定一个<code>N</code>值，返回$F(N)$的值。</p><h3 id="递归法"><a href="#递归法" class="headerlink" title="递归法"></a>递归法</h3><ul><li>检查<code>N</code>的值，如果<code>N &lt;= 1</code>，则将<code>N</code>的值返回。</li><li>若<code>N &gt; 1</code>，则通过调用$N=F(N-1)+F(N-2)$来递归，最终返回<code>N</code>的值。</li></ul><hr><p>​        <code>C++</code>代码实现如下：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N &lt;= <span class="number">1</span>) <span class="keyword">return</span> N;</span><br><span class="line">    N = fib(N - <span class="number">1</span>) + fib(N - <span class="number">2</span>); <span class="comment">//递归过程</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> N;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li><p>时间复杂度：$O(2^n)$.</p><p>这是计算斐波那契函数最慢的一种方法，但其实现起来比较方便，也更容易想到。</p></li><li><p>空间复杂度：$O(n)$.</p><p>为了跟踪<code>fib</code>函数的调用，我们需要与<code>N</code>成正比的空间大小。</p></li></ul><h3 id="自下而上迭代"><a href="#自下而上迭代" class="headerlink" title="自下而上迭代"></a>自下而上迭代</h3><ul><li>若<code>N &lt;= 1</code>，返回<code>N</code>的值。</li><li>迭代至<code>N</code>，将各个计算得到的值存在一个数组里。</li><li>每次迭代用数组当前位置的前两个数得到当前的数。</li><li>返回数组中的第<code>N</code>个值。</li></ul><hr><p>​        <code>C++</code>代码实现如下：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N &lt;= <span class="number">1</span>) <span class="keyword">return</span> N;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">    res.push_back(<span class="number">0</span>);</span><br><span class="line">    res.push_back(<span class="number">1</span>); <span class="comment">//先将0和1存入数组</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; N; i++) &#123;</span><br><span class="line">        res.push_back(res[i - <span class="number">1</span>] + res[i - <span class="number">2</span>]); <span class="comment">//当前位置的值由前两个数相加得到</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> res[N - <span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li><p>时间复杂度：$O(n)$</p><p>迭代了N次。</p></li><li><p>空间复杂度：$O(n)$</p><p>使用了大小为N的数组。</p></li></ul><h3 id="求幂矩阵"><a href="#求幂矩阵" class="headerlink" title="求幂矩阵"></a>求幂矩阵</h3><p>​        我们知道，斐波那契数列矩阵方程为：</p><script type="math/tex; mode=display">\left[\begin{matrix}f(n)\\f(n-1)\end{matrix}\right]=\left[\begin{matrix}1&1\\1&0\end{matrix}\right]\left[\begin{matrix}f(n-1)\\f(n-2)\end{matrix}\right]={\left[\begin{matrix}1&1\\1&0\end{matrix}\right]}^{n-1}\left[\begin{matrix}f(1)\\f(0)\end{matrix}\right]</script><p>​        通过矩阵求幂即可得到$F(N)$的值。</p><ul><li>若<code>N &lt;= 1</code>，返回<code>N</code>的值。</li><li>计算<code>{[1, 1], [1, 0]}</code>的<code>N - 1</code>次方得到的矩阵。</li><li>由于该矩阵乘以<code>{[1], [0]}</code>后，第一个元素就是$F(N)$的值，所以返回。</li></ul><hr><p>​        <code>C++</code>代码实现如下：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N &lt;= <span class="number">1</span>) <span class="keyword">return</span> N;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; A = &#123;&#123;<span class="number">1</span>, <span class="number">1</span>&#125;, &#123;<span class="number">1</span>, <span class="number">0</span>&#125;&#125;;</span><br><span class="line">    recursiveMatrix(A, N - <span class="number">1</span>); <span class="comment">//求幂</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> A[<span class="number">0</span>][<span class="number">0</span>]；</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> mutip(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; A, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; B) &#123;</span><br><span class="line">    <span class="keyword">int</span> a = A[<span class="number">0</span>][<span class="number">0</span>] * B[<span class="number">0</span>][<span class="number">0</span>] + A[<span class="number">0</span>][<span class="number">1</span>] * B[<span class="number">1</span>][<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">int</span> b = A[<span class="number">0</span>][<span class="number">0</span>] * B[<span class="number">0</span>][<span class="number">1</span>] + A[<span class="number">0</span>][<span class="number">1</span>] * B[<span class="number">1</span>][<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span> c = A[<span class="number">1</span>][<span class="number">0</span>] * B[<span class="number">0</span>][<span class="number">0</span>] + A[<span class="number">1</span>][<span class="number">1</span>] * B[<span class="number">1</span>][<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">int</span> d = A[<span class="number">1</span>][<span class="number">0</span>] * B[<span class="number">0</span>][<span class="number">1</span>] + A[<span class="number">1</span>][<span class="number">1</span>] * B[<span class="number">1</span>][<span class="number">1</span>];</span><br><span class="line">    <span class="comment">//矩阵相乘的实现</span></span><br><span class="line">    A[<span class="number">0</span>][<span class="number">0</span>] = a;</span><br><span class="line">    A[<span class="number">0</span>][<span class="number">1</span>] = b;</span><br><span class="line">    A[<span class="number">1</span>][<span class="number">0</span>] = c;</span><br><span class="line">    A[<span class="number">1</span>][<span class="number">1</span>] = d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">recursiveMatrix</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; A, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N &lt;= <span class="number">1</span>) <span class="keyword">return</span>;</span><br><span class="line">    recursiveMatrix(A, N/<span class="number">2</span>);</span><br><span class="line">    mutip(A, A); </span><br><span class="line">    <span class="comment">//二分求幂，A即为求幂之后的矩阵</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; B = &#123;&#123;<span class="number">1</span>, <span class="number">1</span>&#125;, &#123;<span class="number">1</span>, <span class="number">0</span>&#125;&#125;; <span class="comment">//由于A的值会变化，B用于存储源矩阵</span></span><br><span class="line">    <span class="keyword">if</span>(N % <span class="number">2</span> != <span class="number">0</span>) &#123;</span><br><span class="line">        mutip(A, B);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li>时间复杂度：$O(logN)$.</li><li>空间复杂度：$O(logN)$.</li></ul><h3 id="黄金分割比"><a href="#黄金分割比" class="headerlink" title="黄金分割比"></a>黄金分割比</h3><p>​        <strong>Binet公式</strong>求斐波那契数列的第$n$项时用到了黄金分割比$\varphi$。</p><script type="math/tex; mode=display">a_n=\frac{1}{\sqrt{5}}[{(\frac{1+\sqrt{5}}{2})}^n-{(\frac{1-\sqrt{5}}{2})}^n]</script><ul><li>直接使用Binet公式计算$F(N)$的值。</li></ul><hr><p>​        <code>C++</code>代码实现如下：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">double</span> g = (<span class="number">1</span> + <span class="built_in">sqrt</span>(<span class="number">5</span>)) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">double</span> h = (<span class="number">1</span> - <span class="built_in">sqrt</span>(<span class="number">5</span>)) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> / <span class="built_in">sqrt</span>(<span class="number">5</span>) * (<span class="built_in">pow</span>(g, N) - <span class="built_in">pow</span>(h, N));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><ul><li><p>时间复杂度：$O(1)$.</p><p>没有使用任何迭代或者递归。</p></li><li><p>空间复杂度：$O(1)$.</p></li></ul><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>【1】<a href="https://leetcode-cn.com/problems/fibonacci-number/solution/fei-bo-na-qi-shu-by-leetcode/" target="_blank" rel="noopener">Leetcode斐波那契数</a>.</p>]]></content>
+      
+      
       <categories>
-        <category>算法类</category>
+          
+          <category> 算法类 </category>
+          
       </categories>
-      <tags>
-        <tag>个人学习</tag>
-        <tag>递归算法</tag>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【算法】非典型牛顿迭代法</title>
-    <url>/2020/01/31/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/</url>
-    <content><![CDATA[<h3 id="何为牛顿迭代法"><a href="#何为牛顿迭代法" class="headerlink" title="何为牛顿迭代法"></a>何为牛顿迭代法</h3><p>​        牛顿迭代法的全名叫做<strong>牛顿-拉夫森方法（Newton-Raphson method）</strong>，这是一种在实数域和复数域上近似求解方程的方法。方法使用函数$f(x)$的<a href="https://www.wikiwand.com/zh/泰勒级数" target="_blank" rel="noopener">泰勒级数</a>的前面几项来寻找方程$f(y) = 0$的根。</p>
-<p>​        对于一般的形如$f(x) = 0$的方程，首先任意估算一个解$x_1$，一般来说此时不能得到方程的正确解，则我们在方程曲线上$x=x_1$处作$f(x)$的切线，与x轴相交于点$(x_2,0)$，此时$x_2$要更加接近于方程$f(x)=0$的解了。只要以此方式不断地更新$x_{n+1}$，就能无限接近于方程的精确解。</p>
-<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/newton1.gif?raw=true" alt="newton"></p>
-<p>​        值得注意的是，该方法在<strong>函数不连续</strong>或者<strong>函数有多个零点</strong>的时候会失效。</p>
-<hr>
-<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>​        牛顿迭代法多用于以最快速度求一个数字$m$的<strong>方根</strong>，仅需几次的迭代就能够得到非常精确的结果，下面举例来介绍牛顿迭代法<strong>求平方根的数学公式和实现</strong>。</p>
-<p>​        不妨令$x^m=n$，则方程为$f(x) = x^m-n$.</p>
-<p>​        有</p>
-<script type="math/tex; mode=display">
-f'(x)=mx^{m-1}</script><script type="math/tex; mode=display">
-x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=(1-m)x_n+\frac{nx_n}{mx_n^m}</script><p>​        假设我们输入一个数字$n$，我们现在需要求它的平方根$x$，则</p>
-<script type="math/tex; mode=display">
-f(x)=x^2-n</script><script type="math/tex; mode=display">
-f'(x)=2x</script><script type="math/tex; mode=display">
-x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​        则我们的迭代方程就是$x_{n+1}=\frac{x_n}{2}+\frac{n}{2x_n}$。</p>
-<p>​        现在要确定的是迭代终止条件，假设我们要求的精度是$0.00001$，则迭代终止的条件为$|x^2-n|&lt;0.00001$。</p>
-<p>​        由于$x=0$的时候，$n$的值就为$0$，所以我们将迭代的起点设置为$x=1$，所以我们的程序如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#Python3</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mySqrt</span><span class="params">(self, n: int)</span> -&gt; float:</span></span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">or</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="comment">#先处理特殊值</span></span><br><span class="line">    x0 = <span class="number">1.0</span></span><br><span class="line">    ran = abs(x0 * x0 - n) <span class="comment">#迭代停止信号</span></span><br><span class="line">    <span class="keyword">while</span> ran &gt; <span class="number">0.00001</span>:</span><br><span class="line">        x1 = x0 / <span class="number">2</span> + n / (x0 * <span class="number">2</span>)</span><br><span class="line">        x0 = x1</span><br><span class="line">        ran = abs(x1 * x1 - n)</span><br><span class="line">    <span class="keyword">return</span> x1</span><br></pre></td></tr></table></figure>
-<p>​        当我们输入的值为<strong>2147395599</strong>时，输出<strong>46339.99998</strong>，输出耗时为32ms。而Python自带的<code>n**0.5</code>耗时60ms。</p>
-<hr>
-<h3 id="非典型算法"><a href="#非典型算法" class="headerlink" title="非典型算法"></a>非典型算法</h3><p>​        这里不得不提到神秘数字<strong>0x5f3759df</strong>，这个数字首次出现在游戏《雷神之锤III》的源代码中。</p>
-<p>​        在一个名为<code>q_math.c</code>的文件里出现了如下代码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//C</span></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">Q_rsqrt</span><span class="params">( <span class="keyword">float</span> number )</span> </span>&#123; </span><br><span class="line">   	<span class="keyword">long</span> i; <span class="keyword">float</span> x2, y; <span class="keyword">const</span> <span class="keyword">float</span> threehalfs = <span class="number">1.5F</span>;</span><br><span class="line">    x2 = number * <span class="number">0.5F</span>; </span><br><span class="line">    y = number; </span><br><span class="line">    i = * ( <span class="keyword">long</span> * ) &amp;y; <span class="comment">// evil floating point bit level hacking </span></span><br><span class="line">    i = <span class="number">0x5f3759df</span> - ( i &gt;&gt; <span class="number">1</span> ); <span class="comment">// what the fuck? </span></span><br><span class="line">    y = * ( <span class="keyword">float</span> * ) &amp;i; </span><br><span class="line">    y = y * ( threehalfs - ( x2 * y * y ) ); <span class="comment">// 1st iteration </span></span><br><span class="line">    <span class="comment">// y = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">ifndef</span> Q3_VM #</span></span><br><span class="line">    <span class="function">ifdef __linux__ <span class="title">assert</span><span class="params">( !isnan(y) )</span></span>; <span class="comment">// bk010122 - FPE?</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span> return y; </span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>​        里面出现了一句让人抓毛的代码：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">i = <span class="number">0x5f3759df</span> - ( i &gt;&gt; <span class="number">1</span> ); <span class="comment">// what the fuck?</span></span><br></pre></td></tr></table></figure>
-<p>​        这句代码和下面的两行一起</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">i = <span class="number">0x5f3759df</span> - ( i &gt;&gt; <span class="number">1</span> ); <span class="comment">// what the fuck? </span></span><br><span class="line">y = * ( <span class="keyword">float</span> * ) &amp;i; </span><br><span class="line">y = y * ( threehalfs - ( x2 * y * y ) ); <span class="comment">// 1st iteration</span></span><br></pre></td></tr></table></figure>
-<p>​        就相当于求平方根的操作。</p>
-<p>​        但其中的原理是什么，答案恐怕连写这个代码的人自己也不知道。（what the f*ck?）</p>
-<hr>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>【1】<a href="https://www.wikiwand.com/zh/牛顿法" target="_blank" rel="noopener">维基百科：牛顿法</a></p>
-<p>【2】<a href="https://leetcode-cn.com/problems/sqrtx/submissions/" target="_blank" rel="noopener">力扣题目：求平方根</a></p>
-]]></content>
+      
+      
+        <tags>
+            
+            <tag> 个人学习 </tag>
+            
+            <tag> 递归算法 </tag>
+            
+            <tag> C++ </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>【算法】非典型牛顿迭代法</title>
+      <link href="/2020/01/31/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/"/>
+      <url>/2020/01/31/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E9%9D%9E%E5%85%B8%E5%9E%8B%E7%89%9B%E9%A1%BF%E8%BF%AD%E4%BB%A3%E6%B3%95/</url>
+      
+        <content type="html"><![CDATA[<h3 id="何为牛顿迭代法"><a href="#何为牛顿迭代法" class="headerlink" title="何为牛顿迭代法"></a>何为牛顿迭代法</h3><p>​        牛顿迭代法的全名叫做<strong>牛顿-拉夫森方法（Newton-Raphson method）</strong>，这是一种在实数域和复数域上近似求解方程的方法。方法使用函数$f(x)$的<a href="https://www.wikiwand.com/zh/泰勒级数" target="_blank" rel="noopener">泰勒级数</a>的前面几项来寻找方程$f(y) = 0$的根。</p><p>​        对于一般的形如$f(x) = 0$的方程，首先任意估算一个解$x_1$，一般来说此时不能得到方程的正确解，则我们在方程曲线上$x=x_1$处作$f(x)$的切线，与x轴相交于点$(x_2,0)$，此时$x_2$要更加接近于方程$f(x)=0$的解了。只要以此方式不断地更新$x_{n+1}$，就能无限接近于方程的精确解。</p><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/newton1.gif?raw=true" alt="newton"></p><p>​        值得注意的是，该方法在<strong>函数不连续</strong>或者<strong>函数有多个零点</strong>的时候会失效。</p><hr><h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>​        牛顿迭代法多用于以最快速度求一个数字$m$的<strong>方根</strong>，仅需几次的迭代就能够得到非常精确的结果，下面举例来介绍牛顿迭代法<strong>求平方根的数学公式和实现</strong>。</p><p>​        不妨令$x^m=n$，则方程为$f(x) = x^m-n$.</p><p>​        有</p><script type="math/tex; mode=display">f'(x)=mx^{m-1}</script><script type="math/tex; mode=display">x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=(1-m)x_n+\frac{nx_n}{mx_n^m}</script><p>​        假设我们输入一个数字$n$，我们现在需要求它的平方根$x$，则</p><script type="math/tex; mode=display">f(x)=x^2-n</script><script type="math/tex; mode=display">f'(x)=2x</script><script type="math/tex; mode=display">x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​        则我们的迭代方程就是$x_{n+1}=\frac{x_n}{2}+\frac{n}{2x_n}$。</p><p>​        现在要确定的是迭代终止条件，假设我们要求的精度是$0.00001$，则迭代终止的条件为$|x^2-n|&lt;0.00001$。</p><p>​        由于$x=0$的时候，$n$的值就为$0$，所以我们将迭代的起点设置为$x=1$，所以我们的程序如下：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Python3</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">mySqrt</span><span class="params">(self, n: int)</span> -&gt; float:</span></span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span> <span class="keyword">or</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="comment">#先处理特殊值</span></span><br><span class="line">    x0 = <span class="number">1.0</span></span><br><span class="line">    ran = abs(x0 * x0 - n) <span class="comment">#迭代停止信号</span></span><br><span class="line">    <span class="keyword">while</span> ran &gt; <span class="number">0.00001</span>:</span><br><span class="line">        x1 = x0 / <span class="number">2</span> + n / (x0 * <span class="number">2</span>)</span><br><span class="line">        x0 = x1</span><br><span class="line">        ran = abs(x1 * x1 - n)</span><br><span class="line">    <span class="keyword">return</span> x1</span><br></pre></td></tr></table></figure><p>​        当我们输入的值为<strong>2147395599</strong>时，输出<strong>46339.99998</strong>，输出耗时为32ms。而Python自带的<code>n**0.5</code>耗时60ms。</p><hr><h3 id="非典型算法"><a href="#非典型算法" class="headerlink" title="非典型算法"></a>非典型算法</h3><p>​        这里不得不提到神秘数字<strong>0x5f3759df</strong>，这个数字首次出现在游戏《雷神之锤III》的源代码中。</p><p>​        在一个名为<code>q_math.c</code>的文件里出现了如下代码</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//C</span></span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">Q_rsqrt</span><span class="params">( <span class="keyword">float</span> number )</span> </span>&#123; </span><br><span class="line">   <span class="keyword">long</span> i; <span class="keyword">float</span> x2, y; <span class="keyword">const</span> <span class="keyword">float</span> threehalfs = <span class="number">1.5F</span>;</span><br><span class="line">    x2 = number * <span class="number">0.5F</span>; </span><br><span class="line">    y = number; </span><br><span class="line">    i = * ( <span class="keyword">long</span> * ) &amp;y; <span class="comment">// evil floating point bit level hacking </span></span><br><span class="line">    i = <span class="number">0x5f3759df</span> - ( i &gt;&gt; <span class="number">1</span> ); <span class="comment">// what the fuck? </span></span><br><span class="line">    y = * ( <span class="keyword">float</span> * ) &amp;i; </span><br><span class="line">    y = y * ( threehalfs - ( x2 * y * y ) ); <span class="comment">// 1st iteration </span></span><br><span class="line">    <span class="comment">// y = y * ( threehalfs - ( x2 * y * y ) ); // 2nd iteration, this can be removed</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">ifndef</span> Q3_VM #</span></span><br><span class="line">    <span class="function">ifdef __linux__ <span class="title">assert</span><span class="params">( !isnan(y) )</span></span>; <span class="comment">// bk010122 - FPE?</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">endif</span> return y; </span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure><p>​        里面出现了一句让人抓毛的代码：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i = <span class="number">0x5f3759df</span> - ( i &gt;&gt; <span class="number">1</span> ); <span class="comment">// what the fuck?</span></span><br></pre></td></tr></table></figure><p>​        这句代码和下面的两行一起</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">i = <span class="number">0x5f3759df</span> - ( i &gt;&gt; <span class="number">1</span> ); <span class="comment">// what the fuck? </span></span><br><span class="line">y = * ( <span class="keyword">float</span> * ) &amp;i; </span><br><span class="line">y = y * ( threehalfs - ( x2 * y * y ) ); <span class="comment">// 1st iteration</span></span><br></pre></td></tr></table></figure><p>​        就相当于求平方根的操作。</p><p>​        但其中的原理是什么，答案恐怕连写这个代码的人自己也不知道。（what the f*ck?）</p><hr><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>【1】<a href="https://www.wikiwand.com/zh/牛顿法" target="_blank" rel="noopener">维基百科：牛顿法</a></p><p>【2】<a href="https://leetcode-cn.com/problems/sqrtx/submissions/" target="_blank" rel="noopener">力扣题目：求平方根</a></p>]]></content>
+      
+      
       <categories>
-        <category>算法类</category>
+          
+          <category> 算法类 </category>
+          
       </categories>
-      <tags>
-        <tag>个人学习</tag>
-        <tag>Python3</tag>
-        <tag>牛顿迭代法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【资源】Adobe Illustrator 2020破解版（附带教程）</title>
-    <url>/2020/01/30/%E3%80%90%E8%B5%84%E6%BA%90%E3%80%91Adobe%20Illustrator%202020%E7%A0%B4%E8%A7%A3%E7%89%88%EF%BC%88%E9%99%84%E5%B8%A6%E6%95%99%E7%A8%8B%EF%BC%89/</url>
-    <content><![CDATA[<h3 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h3><p>​        <em>本压缩包内的Adobe Illustrator已经破解，无需二次破解。</em></p>
-<hr>
-<p>​        首先前往<a href="https://pan.baidu.com/s/1Y6E-FDUDqShbzm7uZQH0Aw" target="_blank" rel="noopener">百度网盘链接</a>下载，提取码为<code>5wko</code>。（链接若失效请在评论区留言提醒）</p>
-<p>​        下载完成后解压缩，一定要<strong>先阅读readme文件</strong>里的内容，以免在接下来的使用中出现未知的问题。</p>
-<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/illustrator1.png?raw=true" alt="安装"></p>
-<p>​        双击<strong>Set-up.exe</strong>，进行安装。安装过程可以联网进行（毕竟已经破解过了）。打开后“继续”即可，安装中途可能会要求你登录Creative Cloud账户，直接前往<a href="https://www.adobe.com/cn/creativecloud/catalog/desktop.html" target="_blank" rel="noopener">官网注册</a>。</p>
-<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/illustrator2.png?raw=true" alt="安装界面"></p>
-<p>​        等待安装完成即可。</p>
-<h3 id="二、issues"><a href="#二、issues" class="headerlink" title="二、issues"></a>二、issues</h3><p>​    ● 打开后直接闪退的问题</p>
-<p>​        在 <code>根目录/support files/Contents/Windows</code> 中，找到<strong>Illustrator_Original.exe</strong>，打开后登录到你的creative cloud账户即可，之后就可以直接从Illustrator.exe打开了。</p>
-<p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/illustrator3.png?raw=true" alt="original"></p>
-<p>​        需要额外说明的是，如果在断网的状态下打开Illustrator.exe，即便你之前在Original中登录过，也会出现闪退现象，这和Illustrator 2020最新的检验机制有关。</p>
-<p>​    </p>
-]]></content>
+      
+      
+        <tags>
+            
+            <tag> Python3 </tag>
+            
+            <tag> 牛顿迭代法 </tag>
+            
+            <tag> 个人学习 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>【资源】Adobe Illustrator 2020破解版（附带教程）</title>
+      <link href="/2020/01/30/%E3%80%90%E8%B5%84%E6%BA%90%E3%80%91Adobe%20Illustrator%202020%E7%A0%B4%E8%A7%A3%E7%89%88%EF%BC%88%E9%99%84%E5%B8%A6%E6%95%99%E7%A8%8B%EF%BC%89/"/>
+      <url>/2020/01/30/%E3%80%90%E8%B5%84%E6%BA%90%E3%80%91Adobe%20Illustrator%202020%E7%A0%B4%E8%A7%A3%E7%89%88%EF%BC%88%E9%99%84%E5%B8%A6%E6%95%99%E7%A8%8B%EF%BC%89/</url>
+      
+        <content type="html"><![CDATA[<h3 id="一、安装"><a href="#一、安装" class="headerlink" title="一、安装"></a>一、安装</h3><p>​        <em>本压缩包内的Adobe Illustrator已经破解，无需二次破解。</em></p><hr><p>​        首先前往<a href="https://pan.baidu.com/s/1Y6E-FDUDqShbzm7uZQH0Aw" target="_blank" rel="noopener">百度网盘链接</a>下载，提取码为<code>5wko</code>。（链接若失效请在评论区留言提醒）</p><p>​        下载完成后解压缩，一定要<strong>先阅读readme文件</strong>里的内容，以免在接下来的使用中出现未知的问题。</p><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/illustrator1.png?raw=true" alt="安装"></p><p>​        双击<strong>Set-up.exe</strong>，进行安装。安装过程可以联网进行（毕竟已经破解过了）。打开后“继续”即可，安装中途可能会要求你登录Creative Cloud账户，直接前往<a href="https://www.adobe.com/cn/creativecloud/catalog/desktop.html" target="_blank" rel="noopener">官网注册</a>。</p><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/illustrator2.png?raw=true" alt="安装界面"></p><p>​        等待安装完成即可。</p><h3 id="二、issues"><a href="#二、issues" class="headerlink" title="二、issues"></a>二、issues</h3><p>​    ● 打开后直接闪退的问题</p><p>​        在 <code>根目录/support files/Contents/Windows</code> 中，找到<strong>Illustrator_Original.exe</strong>，打开后登录到你的creative cloud账户即可，之后就可以直接从Illustrator.exe打开了。</p><p><img src="https://github.com/tsuinterukonsigure/blogpics/blob/master/202001/illustrator3.png?raw=true" alt="original"></p><p>​        需要额外说明的是，如果在断网的状态下打开Illustrator.exe，即便你之前在Original中登录过，也会出现闪退现象，这和Illustrator 2020最新的检验机制有关。</p><p>​    </p>]]></content>
+      
+      
       <categories>
-        <category>资源类</category>
+          
+          <category> 资源类 </category>
+          
       </categories>
-      <tags>
-        <tag>软件资源</tag>
-      </tags>
-  </entry>
+      
+      
+        <tags>
+            
+            <tag> 软件资源 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
 </search>
