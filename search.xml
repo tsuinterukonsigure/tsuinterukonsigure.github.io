@@ -246,9 +246,9 @@
         <category>算法类</category>
       </categories>
       <tags>
+        <tag>Python3</tag>
         <tag>动态规划</tag>
         <tag>个人学习</tag>
-        <tag>Python3</tag>
       </tags>
   </entry>
   <entry>
@@ -402,8 +402,8 @@ x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}=\frac12(x_n+\frac{n}{x_n})</script><p>​    
         <category>算法类</category>
       </categories>
       <tags>
-        <tag>个人学习</tag>
         <tag>Python3</tag>
+        <tag>个人学习</tag>
         <tag>牛顿迭代法</tag>
       </tags>
   </entry>
